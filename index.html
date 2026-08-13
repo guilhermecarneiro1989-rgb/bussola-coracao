@@ -65,14 +65,20 @@
             position: absolute;
             top: -60px; 
             left: 50%;
-            transform: translateX(-50%);
-            font-size: 18px; /* Fonte um pouco menor para caber tudo */
-            white-space: nowrap; /* Impede o texto de quebrar em duas linhas */
+            transform: translateX(-50%) rotate(180deg);
+            font-size: 18px; 
+            white-space: nowrap; 
             font-weight: 600;
             color: #ff2d55;
             text-shadow: 0 0 15px rgba(255, 45, 85, 0.8);
             z-index: 10;
-            animation: float 3s ease-in-out infinite;
+            animation: float-inverted 3s ease-in-out infinite;
+        }
+
+        @keyframes float-inverted {
+            0% { transform: translateX(-50%) rotate(180deg) translateY(0px); }
+            50% { transform: translateX(-50%) rotate(180deg) translateY(-5px); }
+            100% { transform: translateX(-50%) rotate(180deg) translateY(0px); }
         }
 
         .heart {
@@ -139,7 +145,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.8);
         }
 
-        /* TEXTO DA DISTÂNCIA AGORA É O BOTÃO SECRETO */
         .distance-text {
             position: relative;
             z-index: 30;
@@ -150,7 +155,7 @@
             letter-spacing: 1px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Evita piscar cinza ao tocar */
+            -webkit-tap-highlight-color: transparent; 
         }
 
         button {
@@ -192,7 +197,6 @@
         <div class="center-pin"></div>
     </div>
     
-    <!-- Este texto agora tem o ID resetAlvo, funcionando como o botão -->
     <div class="distance-text" id="resetAlvo">Distância: 0.1 metros</div>
     <button id="startBtn">Ativar Bússola</button>
 
@@ -216,7 +220,6 @@
             document.getElementById('startBtn').style.display = 'none';
         });
 
-        // Clique no texto da distância para alinhar a bússola
         document.getElementById('resetAlvo').addEventListener('click', () => {
             if (direcaoAlvo !== null) {
                 direcaoAlvo = direcaoAtualLida;
