@@ -56,7 +56,8 @@
             color: #636366;
             z-index: 5;
         }
-        .dir-n { top: 25px; color: #ff2d55; } 
+        /* Mudei o N para prata já que o tema agora não é focado no vermelho do coração */
+        .dir-n { top: 25px; color: #d1d1d6; } 
         .dir-s { bottom: 25px; }
         .dir-e { right: 25px; }
         .dir-w { left: 25px; }
@@ -81,12 +82,11 @@
             left: 50%;
             transform: translateX(-50%) rotate(180deg);
             font-size: 50px;
-            text-shadow: 0 0 20px rgba(255, 45, 85, 0.9);
+            text-shadow: 0 0 20px rgba(255, 45, 85, 0.5);
             z-index: 10;
             animation: float-inverted 3s ease-in-out infinite;
         }
 
-        /* Animação ajustada para objetos invertidos em 180 graus */
         @keyframes float-inverted {
             0% { transform: translateX(-50%) rotate(180deg) translateY(0px); }
             50% { transform: translateX(-50%) rotate(180deg) translateY(5px); }
@@ -175,8 +175,8 @@
 <body>
 
     <div class="compass-box">
-        <div class="amor-text">amor da minha vida</div>
-        <div class="heart">❤️</div>
+        <div class="amor-text">meu futuro problema</div>
+        <div class="heart">😈</div>
         
         <div class="compass-ticks"></div>
         <div class="direction dir-n">N</div>
@@ -193,7 +193,7 @@
     </div>
     
     <div class="distance-text" id="resetAlvo">Distância: 0.1 metros</div>
-    <button id="startBtn">Ativar Bússola</button>
+    <button id="startBtn">Ativar Radar</button>
 
     <script>
         let direcaoAlvo = null; 
@@ -206,7 +206,7 @@
                     if (permission === 'granted') {
                         startCompass();
                     } else {
-                        alert("Preciso de permissão para a bússola!");
+                        alert("Preciso de permissão para o radar funcionar!");
                     }
                 } catch (e) { console.error(e); }
             } else { 
@@ -215,7 +215,7 @@
             document.getElementById('startBtn').style.display = 'none';
         });
 
-        // Botão secreto de calibração na distância
+        // O botão secreto escondido na distância continua funcionando
         document.getElementById('resetAlvo').addEventListener('click', () => {
             if (direcaoAlvo !== null) {
                 direcaoAlvo = direcaoAtualLida;
