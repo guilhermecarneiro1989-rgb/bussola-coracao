@@ -65,6 +65,19 @@
         .dir-e { right: 25px; }
         .dir-w { left: 25px; }
 
+        .amor-text {
+            position: absolute;
+            top: -65px; /* Fica logo acima do coração */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff2d55;
+            text-shadow: 0 0 15px rgba(255, 45, 85, 0.8);
+            z-index: 10;
+            animation: float 3s ease-in-out infinite;
+        }
+
         .heart {
             position: absolute;
             top: -30px; 
@@ -163,6 +176,7 @@
 <body>
 
     <div class="compass-box">
+        <div class="amor-text">amor</div>
         <div class="heart">❤️</div>
         
         <!-- Detalhes do Mostrador -->
