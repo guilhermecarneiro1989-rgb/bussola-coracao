@@ -6,11 +6,8 @@
     <title>Bússola do Coração</title>
     <style>
         body {
-            /* Fundo com gradiente animado (Preto e Vermelho muito escuro) */
-            background: linear-gradient(-45deg, #0a0a0a, #1a0005, #2b000a, #0a0a0a);
-            background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
-            
+            /* Fundo escuro realista com leve iluminação central */
+            background: radial-gradient(circle at 50% 30%, #2a2a30 0%, #08080a 80%);
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
@@ -22,31 +19,51 @@
             overflow: hidden;
         }
 
-        /* Animação do fundo se movendo */
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .compass-box {
             position: relative;
             width: 320px;
             height: 320px;
             
-            /* Efeito Vidro Fosco (Glassmorphism) */
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 45, 85, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            
+            /* Efeito 3D realista (Metal Escuro) */
+            background: linear-gradient(145deg, #1c1c20, #151518);
+            box-shadow: 
+                15px 15px 35px rgba(0,0,0,0.8),
+                -10px -10px 25px rgba(255,255,255,0.04),
+                inset 0 0 15px rgba(0,0,0,0.9);
+            border: 2px solid #2a2a30;
             border-radius: 50%;
+            
             display: flex;
             align-items: center;
             justify-content: center;
             margin-top: 40px;
         }
+
+        /* Marcadores de graus (Risquinhos da bússola) */
+        .compass-ticks {
+            position: absolute;
+            width: 295px;
+            height: 295px;
+            border-radius: 50%;
+            background: repeating-conic-gradient(
+                from 0deg,
+                transparent 0deg 3deg,
+                rgba(255, 255, 255, 0.15) 3deg 4deg
+            );
+        }
+
+        /* Letras Cardeais (N, S, L, O) */
+        .direction {
+            position: absolute;
+            font-size: 20px;
+            font-weight: bold;
+            color: #636366;
+            z-index: 5;
+        }
+        .dir-n { top: 25px; color: #ff2d55; } /* N em vermelho */
+        .dir-s { bottom: 25px; }
+        .dir-e { right: 25px; }
+        .dir-w { left: 25px; }
 
         .heart {
             position: absolute;
@@ -56,7 +73,6 @@
             font-size: 50px;
             text-shadow: 0 0 20px rgba(255, 45, 85, 0.9);
             z-index: 10;
-            /* Leve animação de flutuação no coração */
             animation: float 3s ease-in-out infinite;
         }
 
@@ -73,28 +89,56 @@
             width: 100%;
             height: 100%;
             transition: transform 0.15s ease-out; 
+            z-index: 6;
         }
 
-        .arrow {
+        /* Parte de cima da agulha (Vermelha) */
+        .arrow-top {
             position: absolute;
             bottom: 50%; 
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 18px solid transparent;
-            border-right: 18px solid transparent;
-            border-bottom: 130px solid #ff2d55; 
-            /* Sombra na seta para dar profundidade */
-            filter: drop-shadow(0px 0px 8px rgba(255, 45, 85, 0.5));
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-bottom: 110px solid #ff2d55; 
+            filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.7));
+        }
+
+        /* Parte de baixo da agulha (Prata) */
+        .arrow-bottom {
+            position: absolute;
+            top: 50%; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 50px solid #d1d1d6; 
+            filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.7));
+        }
+
+        /* Pino central metálico */
+        .center-pin {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #e5e5ea 0%, #8e8e93 100%);
+            border: 2px solid #1c1c1e;
+            border-radius: 50%;
+            z-index: 20;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
         }
 
         .distance-text {
             margin-top: 60px;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 300;
             color: #f2f2f7;
             letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         button {
@@ -104,7 +148,6 @@
             font-weight: bold;
             border: none;
             border-radius: 30px;
-            /* Botão com visual premium */
             background: linear-gradient(135deg, #ff2d55, #d91c40);
             color: white;
             cursor: pointer;
@@ -121,16 +164,28 @@
 
     <div class="compass-box">
         <div class="heart">❤️</div>
+        
+        <!-- Detalhes do Mostrador -->
+        <div class="compass-ticks"></div>
+        <div class="direction dir-n">N</div>
+        <div class="direction dir-s">S</div>
+        <div class="direction dir-e">L</div>
+        <div class="direction dir-w">O</div>
+
+        <!-- Agulha da Bússola -->
         <div class="arrow-container" id="arrow-container">
-            <div class="arrow"></div>
+            <div class="arrow-top"></div>
+            <div class="arrow-bottom"></div>
         </div>
+        
+        <!-- Eixo central -->
+        <div class="center-pin"></div>
     </div>
     
     <div class="distance-text">Distância: 0.1 metros</div>
     <button id="startBtn">Ativar Bússola</button>
 
     <script>
-        // Variável que vai guardar a direção inicial
         let direcaoAlvo = null; 
 
         document.getElementById('startBtn').addEventListener('click', async () => {
@@ -151,18 +206,15 @@
 
         function startCompass() {
             window.addEventListener('deviceorientation', (event) => {
-                // Lê para onde o celular está apontando agora
                 let heading = event.webkitCompassHeading;
                 if (heading === null || heading === undefined) {
                     heading = 360 - event.alpha;
                 }
                 
-                // Se for a primeira vez que lê (assim que clica no botão), salva essa direção como o alvo!
                 if (direcaoAlvo === null) {
                     direcaoAlvo = heading;
                 }
                 
-                // Calcula a rotação da seta (Alvo travado - Direção atual)
                 let needleRotation = direcaoAlvo - heading;
                 document.getElementById('arrow-container').style.transform = `rotate(${needleRotation}deg)`;
             });
