@@ -37,19 +37,6 @@
             margin-top: 40px;
         }
 
-        /* ÁREA CLICÁVEL INVISÍVEL SOBRE O CORAÇÃO E A PALAVRA */
-        .hitbox {
-            position: absolute;
-            top: -75px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 120px;
-            z-index: 30;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Evita que a tela pisque cinza ao clicar no iPhone */
-        }
-
         .compass-ticks {
             position: absolute;
             width: 295px;
@@ -76,10 +63,11 @@
 
         .amor-text {
             position: absolute;
-            top: -65px; 
+            top: -60px; 
             left: 50%;
             transform: translateX(-50%);
-            font-size: 24px;
+            font-size: 18px; /* Fonte um pouco menor para caber tudo */
+            white-space: nowrap; /* Impede o texto de quebrar em duas linhas */
             font-weight: 600;
             color: #ff2d55;
             text-shadow: 0 0 15px rgba(255, 45, 85, 0.8);
@@ -151,13 +139,18 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.8);
         }
 
+        /* TEXTO DA DISTÂNCIA AGORA É O BOTÃO SECRETO */
         .distance-text {
+            position: relative;
+            z-index: 30;
             margin-top: 60px;
             font-size: 26px;
             font-weight: 300;
             color: #f2f2f7;
             letter-spacing: 1px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent; /* Evita piscar cinza ao tocar */
         }
 
         button {
@@ -182,10 +175,7 @@
 <body>
 
     <div class="compass-box">
-        <!-- O botão invisível -->
-        <div class="hitbox" id="resetAlvo"></div>
-
-        <div class="amor-text">amor</div>
+        <div class="amor-text">amor da minha vida</div>
         <div class="heart">❤️</div>
         
         <div class="compass-ticks"></div>
@@ -202,12 +192,13 @@
         <div class="center-pin"></div>
     </div>
     
-    <div class="distance-text">Distância: 0.1 metros</div>
+    <!-- Este texto agora tem o ID resetAlvo, funcionando como o botão -->
+    <div class="distance-text" id="resetAlvo">Distância: 0.1 metros</div>
     <button id="startBtn">Ativar Bússola</button>
 
     <script>
         let direcaoAlvo = null; 
-        let direcaoAtualLida = 0; // Guarda sempre a última direção que o celular apontou
+        let direcaoAtualLida = 0; 
 
         document.getElementById('startBtn').addEventListener('click', async () => {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -225,13 +216,11 @@
             document.getElementById('startBtn').style.display = 'none';
         });
 
-        // Evento de clique para o "Alinhamento Secreto"
+        // Clique no texto da distância para alinhar a bússola
         document.getElementById('resetAlvo').addEventListener('click', () => {
             if (direcaoAlvo !== null) {
-                // Transforma a direção atual no novo Alvo
                 direcaoAlvo = direcaoAtualLida;
                 
-                // Tenta vibrar o celular rapidamente se o navegador permitir
                 if (navigator.vibrate) {
                     navigator.vibrate(50);
                 }
@@ -245,10 +234,8 @@
                     heading = 360 - event.alpha;
                 }
                 
-                // Atualiza continuamente a variável de controle
                 direcaoAtualLida = heading;
                 
-                // Se for a primeira vez que lê (clique no botão iniciar)
                 if (direcaoAlvo === null) {
                     direcaoAlvo = heading;
                 }
