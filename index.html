@@ -75,27 +75,22 @@
             animation: float-inverted 3s ease-in-out infinite;
         }
 
-        @keyframes float-inverted {
-            0% { transform: translateX(-50%) rotate(180deg) translateY(0px); }
-            50% { transform: translateX(-50%) rotate(180deg) translateY(-5px); }
-            100% { transform: translateX(-50%) rotate(180deg) translateY(0px); }
-        }
-
         .heart {
             position: absolute;
             top: -30px; 
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) rotate(180deg);
             font-size: 50px;
             text-shadow: 0 0 20px rgba(255, 45, 85, 0.9);
             z-index: 10;
-            animation: float 3s ease-in-out infinite;
+            animation: float-inverted 3s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0% { transform: translateX(-50%) translateY(0px); }
-            50% { transform: translateX(-50%) translateY(-5px); }
-            100% { transform: translateX(-50%) translateY(0px); }
+        /* Animação ajustada para objetos invertidos em 180 graus */
+        @keyframes float-inverted {
+            0% { transform: translateX(-50%) rotate(180deg) translateY(0px); }
+            50% { transform: translateX(-50%) rotate(180deg) translateY(5px); }
+            100% { transform: translateX(-50%) rotate(180deg) translateY(0px); }
         }
 
         .arrow-container {
@@ -220,6 +215,7 @@
             document.getElementById('startBtn').style.display = 'none';
         });
 
+        // Botão secreto de calibração na distância
         document.getElementById('resetAlvo').addEventListener('click', () => {
             if (direcaoAlvo !== null) {
                 direcaoAlvo = direcaoAtualLida;
