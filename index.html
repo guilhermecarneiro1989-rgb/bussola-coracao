@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bússola do Coração</title>
+    <style>
+        body { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            background-color: #1c1c1e; /* Estilo escuro moderno */
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            overflow: hidden; 
+            margin: 0;
+        }
+        #compass-container {
+            width: 320px; 
+            height: 320px; 
+            border-radius: 50%; 
+            border: 4px solid #333; 
+            position: relative; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        /* Este é o elemento que vai girar */
+        #compass { 
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transition: transform 0.1s ease-out;
+            display: flex;
+            justify-content: center;
+        }
+        #arrow { 
+            width: 0; 
+            height: 0; 
+            border-left: 20px solid transparent; 
+            border-right: 20px solid transparent; 
+            border-bottom: 140px solid #ff2d55; /* Vermelho Apple */
+            position: absolute; 
+            top: 20px; 
+        }
+        #heart { 
+            font-size: 50px; 
+            position: absolute; 
+            top: -25px; 
+            text-shadow: 0 0 15px rgba(255, 45, 85, 0.6);
+        }
+        button { 
+            margin-top: 40px; 
+            padding: 16px 32px; 
+            font-size: 18px; 
+            font-weight: bold;
+            border-radius: 30px; 
+            border: none; 
+            background-color: #ff2d55; 
+            color: white; 
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 45, 85, 0.4);
+        }
+        #info { margin-top: 30px; font-size: 18px; text-align: center; color: #a1a1a6; }
+    </style>
+</head>
+<body>
+
+    <div id="compass-container">
+        <div id="compass">
+            <div id="heart">❤️</div>
+            <div id="arrow"></div>
+        </div>
+    </div>
+    
+    <div id="info">Distância: -- km</div>
+    <button id="startBtn">Ativar Bússola</button>
+
+    <script>
+        // === COLOQUE AS COORDENADAS DO DESTINO AQUI ===
+        // Exemplo inicial, substitua pelas coordenadas do ponto fixo
+        const targetLat = -21.7661; 
+        const targetLon = -43.3490;
+
+        let currentLat = null;
+        let currentLon = null;
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            // O iOS exige que o usuário clique em um botão para liberar o sensor da bússola
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        startTracking();
+                    } else {
+                        alert("Para funcionar, o navegador precisa acessar a bússola.");
+                    }
+                } catch (error) {
+                    console.error("Erro ao pedir permissão", error);
+                }
+            } else {
+                startTracking(); 
+            }
+            document.getElementById('startBtn').style.display = 'none';
+        });
+
+        function startTracking() {
+            // Inicia o rastreio do GPS
+            navigator.geolocation.watchPosition((position) => {
+                currentLat = position.coords.latitude;
+                currentLon = position.coords.longitude;
+            }, (err) => {
+                alert("Erro ao acessar o GPS: " + err.message);
+            }, { enableHighAccuracy: true });
+
+            // Escuta o sensor de movimento/bússola
+            window.addEventListener('deviceorientation', (event) => {
+                if (currentLat === null) return;
+
+                let heading = 0;
+                // Pega a direção da bússola dependendo do sistema
+                if (event.webkitCompassHeading) {
+                    heading = event.webkitCompassHeading;
+                } else {
+                    heading = 360 - event.alpha; 
+                }
+
+                const bearing = calculateBearing(currentLat, currentLon, targetLat, targetLon);
+                const distance = calculateDistance(currentLat, currentLon, targetLat, targetLon);
+
+                // A diferença entre onde o alvo está (bearing) e para onde o celular aponta (heading)
+                let compassRotation = bearing - heading;
+
+                document.getElementById('compass').style.transform = `rotate(${compassRotation}deg)`;
+                
+                // Formata a distância para metros se for menor que 1km
+                let distText = distance < 1 ? `${(distance * 1000).toFixed(0)} m` : `${distance.toFixed(1)} km`;
+                document.getElementById('info').innerHTML = `Distância: ${distText}`;
+            });
+        }
+
+        // Funções matemáticas (Haversine) para calcular ângulo e distância
+        function toRad(deg) { return deg * Math.PI / 180; }
+
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const dLon = toRad(lon2 - lon1);
+            lat1 = toRad(lat1);
+            lat2 = toRad(lat2);
+
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            let brng = Math.atan2(y, x);
+            return ((brng * 180 / Math.PI) + 360) % 360;
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+    </script>
+</body>
+</html>
