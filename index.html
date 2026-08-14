@@ -56,12 +56,12 @@
             color: #636366;
             z-index: 5;
         }
-        /* Mudei o N para prata já que o tema agora não é focado no vermelho do coração */
         .dir-n { top: 25px; color: #d1d1d6; } 
         .dir-s { bottom: 25px; }
         .dir-e { right: 25px; }
         .dir-w { left: 25px; }
 
+        /* Transformado em campo editável invisível */
         .amor-text {
             position: absolute;
             top: -60px; 
@@ -72,8 +72,10 @@
             font-weight: 600;
             color: #ff2d55;
             text-shadow: 0 0 15px rgba(255, 45, 85, 0.8);
-            z-index: 10;
+            z-index: 40; /* Z-index alto para facilitar o toque */
             animation: float-inverted 3s ease-in-out infinite;
+            outline: none; /* Remove a borda azul ao clicar */
+            cursor: text;
         }
 
         .heart {
@@ -175,7 +177,8 @@
 <body>
 
     <div class="compass-box">
-        <div class="amor-text">meu futuro problema</div>
+        <!-- O atributo contenteditable="true" permite digitar no texto. spellcheck="false" tira a linha vermelha de erro ortográfico -->
+        <div class="amor-text" id="tituloEditavel" contenteditable="true" spellcheck="false">meu futuro problema</div>
         <div class="heart">😈</div>
         
         <div class="compass-ticks"></div>
@@ -199,6 +202,21 @@
         let direcaoAlvo = null; 
         let direcaoAtualLida = 0; 
 
+        // LÓGICA PARA SALVAR O TEXTO DIGITADO
+        const titulo = document.getElementById('tituloEditavel');
+        
+        // Verifica se tem algum texto salvo na memória do navegador ao abrir
+        const textoSalvo = localStorage.getItem('textoBussola');
+        if (textoSalvo) {
+            titulo.innerText = textoSalvo;
+        }
+
+        // Toda vez que você digitar algo, ele salva automaticamente
+        titulo.addEventListener('input', () => {
+            localStorage.setItem('textoBussola', titulo.innerText);
+        });
+
+        // LÓGICA DA BÚSSOLA E RADAR
         document.getElementById('startBtn').addEventListener('click', async () => {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 try {
@@ -215,11 +233,9 @@
             document.getElementById('startBtn').style.display = 'none';
         });
 
-        // O botão secreto escondido na distância continua funcionando
         document.getElementById('resetAlvo').addEventListener('click', () => {
             if (direcaoAlvo !== null) {
                 direcaoAlvo = direcaoAtualLida;
-                
                 if (navigator.vibrate) {
                     navigator.vibrate(50);
                 }
