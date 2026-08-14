@@ -61,7 +61,6 @@
         .dir-e { right: 25px; }
         .dir-w { left: 25px; }
 
-        /* Transformado em campo editável invisível */
         .amor-text {
             position: absolute;
             top: -60px; 
@@ -72,12 +71,13 @@
             font-weight: 600;
             color: #ff2d55;
             text-shadow: 0 0 15px rgba(255, 45, 85, 0.8);
-            z-index: 40; /* Z-index alto para facilitar o toque */
+            z-index: 40; 
             animation: float-inverted 3s ease-in-out infinite;
-            outline: none; /* Remove a borda azul ao clicar */
+            outline: none; 
             cursor: text;
         }
 
+        /* Ícone agora também é editável e sem borda de foco */
         .heart {
             position: absolute;
             top: -30px; 
@@ -85,8 +85,10 @@
             transform: translateX(-50%) rotate(180deg);
             font-size: 50px;
             text-shadow: 0 0 20px rgba(255, 45, 85, 0.5);
-            z-index: 10;
+            z-index: 40; /* Aumentei para poder clicar fácil */
             animation: float-inverted 3s ease-in-out infinite;
+            outline: none; 
+            cursor: text;
         }
 
         @keyframes float-inverted {
@@ -177,9 +179,9 @@
 <body>
 
     <div class="compass-box">
-        <!-- O atributo contenteditable="true" permite digitar no texto. spellcheck="false" tira a linha vermelha de erro ortográfico -->
         <div class="amor-text" id="tituloEditavel" contenteditable="true" spellcheck="false">meu futuro problema</div>
-        <div class="heart">😈</div>
+        <!-- Adicionei contenteditable aqui também -->
+        <div class="heart" id="iconeEditavel" contenteditable="true" spellcheck="false">😈</div>
         
         <div class="compass-ticks"></div>
         <div class="direction dir-n">N</div>
@@ -204,16 +206,22 @@
 
         // LÓGICA PARA SALVAR O TEXTO DIGITADO
         const titulo = document.getElementById('tituloEditavel');
-        
-        // Verifica se tem algum texto salvo na memória do navegador ao abrir
         const textoSalvo = localStorage.getItem('textoBussola');
         if (textoSalvo) {
             titulo.innerText = textoSalvo;
         }
-
-        // Toda vez que você digitar algo, ele salva automaticamente
         titulo.addEventListener('input', () => {
             localStorage.setItem('textoBussola', titulo.innerText);
+        });
+
+        // LÓGICA PARA SALVAR O ÍCONE DIGITADO
+        const icone = document.getElementById('iconeEditavel');
+        const iconeSalvo = localStorage.getItem('iconeBussola');
+        if (iconeSalvo) {
+            icone.innerText = iconeSalvo;
+        }
+        icone.addEventListener('input', () => {
+            localStorage.setItem('iconeBussola', icone.innerText);
         });
 
         // LÓGICA DA BÚSSOLA E RADAR
